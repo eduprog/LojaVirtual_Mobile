@@ -1,7 +1,6 @@
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:lojavirtual_mobile/models/product.model.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 class ProductScreen extends StatefulWidget {
   final ProductModel _productModel;
