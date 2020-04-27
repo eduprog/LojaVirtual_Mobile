@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lojavirtual_mobile/models/product.model.dart';
 import 'package:lojavirtual_mobile/screens/product_screen.dart';
 import 'package:transparent_image/transparent_image.dart';
+import 'package:carousel_pro/carousel_pro.dart';
 
 class ProductTile extends StatelessWidget {
   final String _type;
@@ -18,10 +19,15 @@ class ProductTile extends StatelessWidget {
         children: <Widget>[
           AspectRatio(
             aspectRatio: 0.8,
-            child: FadeInImage.memoryNetwork(
-              placeholder: kTransparentImage,
-              image: _productModel.images[0].image,
-              fit: BoxFit.cover,
+            child: Carousel(
+              dotSize: 4.0,
+              dotSpacing: 15.0,
+              dotBgColor: Colors.transparent,
+              autoplay: false,
+              dotColor: Theme.of(context).primaryColor,
+              images: _productModel.images.map((image) {
+                return NetworkImage(image.image);
+              }).toList(),
             ),
           ),
           Expanded(
@@ -53,10 +59,18 @@ class ProductTile extends StatelessWidget {
         children: <Widget>[
           Flexible(
             flex: 1,
-            child: FadeInImage.memoryNetwork(
-              placeholder: kTransparentImage,
-              image: _productModel.images[0].image,
-              fit: BoxFit.cover,
+            child: AspectRatio(
+              aspectRatio: 0.8,
+              child: Carousel(
+                dotSize: 4.0,
+                dotSpacing: 15.0,
+                dotBgColor: Colors.transparent,
+                autoplay: false,
+                dotColor: Theme.of(context).primaryColor,
+                images: _productModel.images.map((image) {
+                  return NetworkImage(image.image);
+                }).toList(),
+              ),
             ),
           ),
           Flexible(
