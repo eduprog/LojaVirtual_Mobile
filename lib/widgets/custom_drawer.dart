@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:lojavirtual_mobile/screens/login_screen.dart';
+import 'package:lojavirtual_mobile/store/user.store.dart';
+import 'package:provider/provider.dart';
 
 import 'drawer_tile.dart';
 
@@ -19,6 +22,10 @@ class CustomDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var store = Provider.of<UserStore>(context);
+
+    store.readUser();
+
     return Drawer(
       child: Stack(
         children: <Widget>[
@@ -44,33 +51,41 @@ class CustomDrawer extends StatelessWidget {
                     Positioned(
                       left: 0.0,
                       bottom: 0.0,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            "Olá,",
-                            style: TextStyle(
-                              fontSize: 18.0,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          GestureDetector(
-                            child: Text(
-                              "Entre ou cadastre-se >",
+                      child: Observer(builder: (_) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              "Olá, ${store.nameUser}",
                               style: TextStyle(
-                                  color: Theme.of(context).primaryColor,
-                                  fontSize: 16.0,
-                                  fontWeight: FontWeight.bold),
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (context) => LoginScreen()),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
+                            GestureDetector(
+                              child: Text(
+                                store.isLogged
+                                    ? "Sair"
+                                    : "Entre ou cadastre-se >",
+                                style: TextStyle(
+                                    color: Theme.of(context).primaryColor,
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              onTap: () async {
+                                if (store.isLogged) {
+                                  store.logout();
+                                } else {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (context) => LoginScreen()),
+                                  );
+                                }
+                              },
+                            ),
+                          ],
+                        );
+                      }),
                     ),
                   ],
                 ),
