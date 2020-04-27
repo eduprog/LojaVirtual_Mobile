@@ -1,26 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert' as convert;
 import 'package:lojavirtual_mobile/models/banner.model.dart';
-import 'package:lojavirtual_mobile/services/utils/response.api.model.dart';
+import 'package:lojavirtual_mobile/services/banner.service.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class HomeTab extends StatelessWidget {
-  Future<List<BannerModel>> getBannerByLocal(int local) async {
-    http.Response response = await http
-        .get("https://192.168.0.104:5001/api/banner/" + local.toString());
-
-    ResponseApi jsonResponse =
-        ResponseApi.fromJson(convert.jsonDecode(response.body));
-
-    if (jsonResponse.success == true) {
-      return (jsonResponse.data)
-          .map((banners) => BannerModel.fromJson(banners))
-          .toList();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     Widget _buildBodyBackDegrade() => Container(
@@ -51,7 +35,7 @@ class HomeTab extends StatelessWidget {
               ),
             ),
             FutureBuilder<List<BannerModel>>(
-              future: getBannerByLocal(1),
+              future: BannerService.getBannerByLocal(1),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.none ||
                     snapshot.connectionState == ConnectionState.waiting) {
