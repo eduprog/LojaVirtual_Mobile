@@ -2,16 +2,32 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 
+import 'package:lojavirtual_mobile/services/storage.service.dart';
+import 'package:lojavirtual_mobile/services/utils/user.authenticated.model.dart';
+
 class Api {
-  static final String baseUrl = "https://192.168.0.104:5001/";
+  static final String baseUrl = "https://192.168.0.102:5001/";
+
+  static Future<String> getTokenJwt() async {
+    StorageService storage = StorageService();
+
+    var data = await storage.readAuthUser();
+    var auth = UserAuthenticated.fromJson(convert.jsonDecode(data));
+    return auth.accessToken;
+  }
 
   static dynamic get(String url, {bool withToken = false}) async {
     try {
       http.Response response;
-      if (withToken) {
-        response = await http.get(baseUrl + url, headers: {
-          HttpHeaders.authorizationHeader: "Bearer your_api_token_here"
-        });
+      if (withToken == true) {
+        String token = await getTokenJwt();
+        response = await http.get(
+          baseUrl + url,
+          headers: {
+            "Content-Type": "application/json",
+            HttpHeaders.authorizationHeader: "Bearer $token"
+          },
+        );
       } else {
         response = await http.get(baseUrl + url);
       }
@@ -26,22 +42,25 @@ class Api {
   static dynamic post(String url,
       {bool withToken = false, Map<String, dynamic> body}) async {
     try {
-      http.Response response = await http.post(
-        baseUrl + url,
-        headers: {"Content-Type": "application/json"},
-        body: convert.jsonEncode(body),
-      );
+      http.Response response;
 
-      // if (withToken) {
-      //   response.headers.addAll(
-      //       {HttpHeaders.authorizationHeader: "Bearer your_api_token_here"});
-      // }
-
-      // response.body.
-      //     body: convert.jsonEncode(user.toJson()));
-
-      // var jsonResponse = convert.jsonDecode(response.body);
-
+      if (withToken == true) {
+        String token = await getTokenJwt();
+        response = await http.post(
+          baseUrl + url,
+          headers: {
+            "Content-Type": "application/json",
+            HttpHeaders.authorizationHeader: "Bearer $token"
+          },
+          body: convert.jsonEncode(body),
+        );
+      } else {
+        response = await http.post(
+          baseUrl + url,
+          headers: {"Content-Type": "application/json"},
+          body: convert.jsonEncode(body),
+        );
+      }
       return convert.jsonDecode(response.body);
     } catch (e) {
       print(e);

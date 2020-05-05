@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:lojavirtual_mobile/screens/home_screen.dart';
+import 'package:lojavirtual_mobile/store/cart.store.dart';
 import 'package:lojavirtual_mobile/store/user.store.dart';
 import 'package:provider/provider.dart';
 
@@ -24,8 +25,15 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Provider<UserStore>(
-      create: (_) => UserStore(),
+    return MultiProvider(
+      providers: [
+        Provider<UserStore>.value(
+          value: UserStore(),
+        ),
+        Provider<CartStore>.value(
+          value: CartStore(),
+        ),
+      ],
       child: MaterialApp(
           title: 'Flutter\'s Clothing',
           theme: ThemeData(

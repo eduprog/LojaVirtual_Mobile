@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lojavirtual_mobile/models/category.model.dart';
 import 'package:lojavirtual_mobile/models/product.model.dart';
-import 'package:http/http.dart' as http;
 import 'package:lojavirtual_mobile/services/category.service.dart';
-import 'dart:convert' as convert;
-
-import 'package:lojavirtual_mobile/services/utils/response.api.model.dart';
+import 'package:lojavirtual_mobile/widgets/cart_button.dart';
 import 'package:lojavirtual_mobile/widgets/product_tile.dart';
 
 class CategoryScreen extends StatelessWidget {
@@ -18,6 +15,7 @@ class CategoryScreen extends StatelessWidget {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
+          floatingActionButton: CartButton(),
           appBar: AppBar(
             title: Text(_categoryModel.title),
             centerTitle: true,

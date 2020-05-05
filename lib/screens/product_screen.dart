@@ -1,6 +1,14 @@
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:lojavirtual_mobile/models/cart.model.dart';
 import 'package:lojavirtual_mobile/models/product.model.dart';
+import 'package:lojavirtual_mobile/screens/cart_screen.dart';
+import 'package:lojavirtual_mobile/store/cart.store.dart';
+import 'package:lojavirtual_mobile/store/user.store.dart';
+import 'package:provider/provider.dart';
+
+import 'login_screen.dart';
 
 class ProductScreen extends StatefulWidget {
   final ProductModel _productModel;
@@ -13,6 +21,7 @@ class ProductScreen extends StatefulWidget {
 
 class _ProductScreenState extends State<ProductScreen> {
   final ProductModel _productModel;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   String sizeSelected;
 
@@ -20,7 +29,43 @@ class _ProductScreenState extends State<ProductScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var store = Provider.of<UserStore>(context);
+    var cart = Provider.of<CartStore>(context);
+
+    store.readUser();
+
+    handleAddCart() async {
+      if (store.isLogged) {
+        CartProductModel item = new CartProductModel(
+            productId: _productModel.id,
+            product: _productModel,
+            size: sizeSelected,
+            quantity: 1,
+            origin: 1);
+
+        bool hasAdded = await cart.addCartItem(item);
+
+        if (hasAdded) {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => CartScreen()),
+          );
+        } else {
+          _scaffoldKey.currentState.showSnackBar(
+            SnackBar(
+              content: Text("Não foi possível adicionar o item no carrinho!"),
+              backgroundColor: Colors.redAccent,
+              duration: Duration(seconds: 3),
+            ),
+          );
+        }
+      } else {
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => LoginScreen()));
+      }
+    }
+
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text(_productModel.title),
         centerTitle: true,
@@ -104,17 +149,23 @@ class _ProductScreenState extends State<ProductScreen> {
                   height: 16.0,
                 ),
                 SizedBox(
-                  height: 44.0,
-                  child: RaisedButton(
-                    onPressed: sizeSelected == null ? null : () {},
-                    child: Text(
-                      "Adicionar ao carrinho",
-                      style: TextStyle(fontSize: 18.0),
-                    ),
-                    color: Theme.of(context).primaryColor,
-                    textColor: Colors.white,
-                  ),
-                ),
+                    height: 44.0,
+                    child: Observer(
+                      builder: (_) {
+                        return RaisedButton(
+                          onPressed:
+                              sizeSelected == null ? null : handleAddCart,
+                          child: Text(
+                            store.isLogged
+                                ? "Adicionar ao carrinho"
+                                : "Entre para comprar",
+                            style: TextStyle(fontSize: 18.0),
+                          ),
+                          color: Theme.of(context).primaryColor,
+                          textColor: Colors.white,
+                        );
+                      },
+                    )),
                 SizedBox(
                   height: 16.0,
                 ),
