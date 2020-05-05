@@ -10,5 +10,7 @@ class BannerService {
           .map((banners) => BannerModel.fromJson(banners))
           .toList();
     }
+
+    return Future.value(null);
   }
 }

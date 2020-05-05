@@ -10,5 +10,7 @@ class PlaceService {
           .map((place) => PlaceModel.fromJson(place))
           .toList();
     }
+
+    return Future.value(null);
   }
 }

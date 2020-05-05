@@ -42,6 +42,7 @@ abstract class _UserStore with Store {
     } catch (e) {
       isLoading = false;
       print(e);
+      return Future.value(null);
     }
   }
 
@@ -69,6 +70,7 @@ abstract class _UserStore with Store {
     } catch (e) {
       isLoading = false;
       print(e);
+      return Future.value(null);
     }
   }
 

@@ -11,6 +11,8 @@ class CategoryService {
           .map((banners) => CategoryModel.fromJson(banners))
           .toList();
     }
+
+    return Future.value(null);
   }
 
   static Future<List<ProductModel>> getProducts(String idCategory) async {
@@ -21,5 +23,7 @@ class CategoryService {
           .map((banners) => ProductModel.fromJson(banners))
           .toList();
     }
+
+    return Future.value(null);
   }
 }
