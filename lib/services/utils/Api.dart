@@ -6,7 +6,7 @@ import 'package:lojavirtual_mobile/services/storage.service.dart';
 import 'package:lojavirtual_mobile/services/utils/user.authenticated.model.dart';
 
 class Api {
-  static final String baseUrl = "https://192.168.0.102:5001/";
+  static final String baseUrl = "https://192.168.0.103:5001/";
 
   static Future<String> getTokenJwt() async {
     StorageService storage = StorageService();
@@ -61,6 +61,58 @@ class Api {
           body: convert.jsonEncode(body),
         );
       }
+      return convert.jsonDecode(response.body);
+    } catch (e) {
+      print(e);
+      return e;
+    }
+  }
+
+  static dynamic put(String url,
+      {bool withToken = false, Map<String, dynamic> body}) async {
+    try {
+      http.Response response;
+
+      if (withToken == true) {
+        String token = await getTokenJwt();
+        response = await http.put(
+          baseUrl + url,
+          headers: {
+            "Content-Type": "application/json",
+            HttpHeaders.authorizationHeader: "Bearer $token"
+          },
+          body: body == null ? null : convert.jsonEncode(body),
+        );
+      } else {
+        response = await http.put(
+          baseUrl + url,
+          headers: {"Content-Type": "application/json"},
+          body: body == null ? null : convert.jsonEncode(body),
+        );
+      }
+      return convert.jsonDecode(response.body);
+    } catch (e) {
+      print(e);
+      return e;
+    }
+  }
+
+  static dynamic delete(String url, {bool withToken = false}) async {
+    try {
+      http.Response response;
+      if (withToken == true) {
+        String token = await getTokenJwt();
+        response = await http.delete(
+          baseUrl + url,
+          headers: {
+            "Content-Type": "application/json",
+            HttpHeaders.authorizationHeader: "Bearer $token"
+          },
+        );
+      } else {
+        response = await http.delete(baseUrl + url);
+      }
+
       return convert.jsonDecode(response.body);
     } catch (e) {
       print(e);
