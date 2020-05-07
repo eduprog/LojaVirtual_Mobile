@@ -56,10 +56,17 @@ mixin _$CartStore on _CartStore, Store {
     return _$addCartItemAsyncAction.run(() => super.addCartItem(cartProduct));
   }
 
+  final _$getItemsAsyncAction = AsyncAction('getItems');
+
+  @override
+  Future getItems() {
+    return _$getItemsAsyncAction.run(() => super.getItems());
+  }
+
   final _$removeCartItemAsyncAction = AsyncAction('removeCartItem');
 
   @override
-  Future<dynamic> removeCartItem(CartProductModel cartProduct) {
+  Future<bool> removeCartItem(CartProductModel cartProduct) {
     return _$removeCartItemAsyncAction
         .run(() => super.removeCartItem(cartProduct));
   }
