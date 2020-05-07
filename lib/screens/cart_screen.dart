@@ -3,7 +3,9 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:lojavirtual_mobile/screens/login_screen.dart';
 import 'package:lojavirtual_mobile/store/cart.store.dart';
 import 'package:lojavirtual_mobile/store/user.store.dart';
+import 'package:lojavirtual_mobile/widgets/cart_price.dart';
 import 'package:lojavirtual_mobile/widgets/cart_tile.dart';
+import 'package:lojavirtual_mobile/widgets/coupon_discount_card.dart';
 import 'package:lojavirtual_mobile/widgets/loading_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -12,6 +14,7 @@ class CartScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     var cart = Provider.of<CartStore>(context);
     var user = Provider.of<UserStore>(context);
+    final _scaffoldKey = GlobalKey<ScaffoldState>();
 
     user.readUser();
 
@@ -21,9 +24,12 @@ class CartScreen extends StatelessWidget {
       return ListView(
         children: <Widget>[
           Column(
-            children:
-                cart.products.map((product) => CartTile(product)).toList(),
-          )
+            children: cart.products
+                .map((product) => CartTile(product, _scaffoldKey))
+                .toList(),
+          ),
+          CouponDiscountCard(_scaffoldKey),
+          CartPrice(() {}),
         ],
       );
     }
@@ -84,6 +90,7 @@ class CartScreen extends StatelessWidget {
 
     return Observer(builder: (_) {
       return Scaffold(
+        key: _scaffoldKey,
         appBar: AppBar(
           title: Text("Meu Carrinho"),
           actions: <Widget>[

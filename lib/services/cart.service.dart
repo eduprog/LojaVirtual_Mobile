@@ -6,7 +6,6 @@ class CartService {
     var response =
         await Api.post("api/cart", body: item.toJson(), withToken: true);
 
-    print(response);
     if (response["success"] == true) {
       return CartProductModel.fromJson(response["data"]);
     }
@@ -23,5 +22,26 @@ class CartService {
     }
 
     return Future.value(null);
+  }
+
+  static Future<bool> changeQuantity(
+      CartProductModel model, bool addItem) async {
+    var response = await Api.put(
+        "api/cart/${model.id}/change-quantity/${addItem ? 'add' : 'rem'}",
+        withToken: true);
+
+    if (response["success"] == true) {
+      return Future.value(true);
+    }
+    return Future.value(false);
+  }
+
+  static Future<bool> removeItem(CartProductModel model) async {
+    var response = await Api.delete("api/cart/${model.id}", withToken: true);
+
+    if (response["success"] == true) {
+      return Future.value(true);
+    }
+    return Future.value(false);
   }
 }
