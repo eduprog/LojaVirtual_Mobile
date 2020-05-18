@@ -3,6 +3,7 @@ import 'package:lojavirtual_mobile/models/coupon.model.dart';
 import 'package:lojavirtual_mobile/models/user.model.dart';
 import 'package:lojavirtual_mobile/services/cart.service.dart';
 import 'package:lojavirtual_mobile/services/coupon.service.dart';
+import 'package:lojavirtual_mobile/services/order.service.dart';
 import 'package:mobx/mobx.dart';
 
 // Include generated file
@@ -28,7 +29,27 @@ abstract class _CartStore with Store {
   String referenceCoupon;
 
   @observable
-  double percentDiscount;
+  double percentDiscount = 0;
+
+  @computed
+  double get subtotalValueCart {
+    double total = 0.0;
+
+    for (var p in products) {
+      total += p.quantity * p.product.price;
+    }
+    return total;
+  }
+
+  @computed
+  double get totalDiscountCart {
+    return (subtotalValueCart * percentDiscount) / 100;
+  }
+
+  @computed
+  double get totalValueCart {
+    return subtotalValueCart - totalDiscountCart;
+  }
 
   _CartStore() {
     this.products = new List<CartProductModel>();
@@ -141,6 +162,27 @@ abstract class _CartStore with Store {
       isLoading = false;
       print(e);
       return Future.value(false);
+    }
+  }
+
+  @action
+  Future finishOrder() async {
+    isLoading = true;
+
+    try {
+      var response = await OrderService.saveOrder(referenceCoupon, products);
+
+      if (response["success"] == true) {
+        isLoading = false;
+        return response;
+      }
+
+      isLoading = false;
+      return Future.value(null);
+    } catch (e) {
+      isLoading = false;
+      print(e);
+      return Future.value(null);
     }
   }
 }

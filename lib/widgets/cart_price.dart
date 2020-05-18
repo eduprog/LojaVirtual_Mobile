@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:lojavirtual_mobile/store/cart.store.dart';
+import 'package:provider/provider.dart';
 
 class CartPrice extends StatelessWidget {
   final VoidCallback handleBuy;
@@ -7,6 +9,8 @@ class CartPrice extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var cart = Provider.of<CartStore>(context);
+
     return Card(
       margin: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
       child: Container(
@@ -26,7 +30,7 @@ class CartPrice extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text("Subtotal"),
-                Text("R\$ 81,86"),
+                Text("R\$ ${cart.subtotalValueCart.toStringAsFixed(2)}"),
               ],
             ),
             Divider(),
@@ -34,7 +38,7 @@ class CartPrice extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text("Desconto"),
-                Text("R\$ 81,86"),
+                Text("R\$ ${cart.totalDiscountCart.toStringAsFixed(2)}"),
               ],
             ),
             Divider(),
@@ -51,7 +55,7 @@ class CartPrice extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  "R\$ 81,86",
+                  "R\$ ${cart.totalValueCart.toStringAsFixed(2)}",
                   style: TextStyle(
                     color: Theme.of(context).primaryColor,
                     fontSize: 16.0,
@@ -62,12 +66,15 @@ class CartPrice extends StatelessWidget {
             SizedBox(
               height: 12.0,
             ),
-            RaisedButton(
-              onPressed: handleBuy,
-              textColor: Colors.white,
-              color: Theme.of(context).primaryColor,
-              child: Text("Finalizar Pedido"),
-            )
+            SizedBox(
+              height: 44.0,
+              child: RaisedButton(
+                onPressed: handleBuy,
+                textColor: Colors.white,
+                color: Theme.of(context).primaryColor,
+                child: Text("Finalizar Pedido"),
+              ),
+            ),
           ],
         ),
       ),

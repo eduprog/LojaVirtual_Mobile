@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:lojavirtual_mobile/screens/login_screen.dart';
+import 'package:lojavirtual_mobile/screens/order_screen.dart';
 import 'package:lojavirtual_mobile/store/cart.store.dart';
 import 'package:lojavirtual_mobile/store/user.store.dart';
 import 'package:lojavirtual_mobile/widgets/cart_price.dart';
@@ -29,7 +30,39 @@ class CartScreen extends StatelessWidget {
                 .toList(),
           ),
           CouponDiscountCard(_scaffoldKey),
-          CartPrice(() {}),
+          CartPrice(() async {
+            var response = await cart.finishOrder();
+
+            if (response == null) {
+              _scaffoldKey.currentState.showSnackBar(
+                SnackBar(
+                  content: Text(
+                      "Ocorreu um erro ao finalizar o pedido! Por favor, tente novamente."),
+                  backgroundColor: Colors.redAccent,
+                  duration: Duration(seconds: 3),
+                ),
+              );
+            } else {
+              if (response["success"] == true) {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => OrderScreen(response["message"]),
+                  ),
+                );
+              } else {
+                String messageContent =
+                    "${response["message"]} | ${response["data"][0]["message"]} ";
+
+                _scaffoldKey.currentState.showSnackBar(
+                  SnackBar(
+                    content: Text(messageContent),
+                    backgroundColor: Colors.redAccent,
+                    duration: Duration(seconds: 3),
+                  ),
+                );
+              }
+            }
+          }),
         ],
       );
     }
