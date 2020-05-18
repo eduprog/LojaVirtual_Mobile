@@ -6,7 +6,7 @@ import 'package:lojavirtual_mobile/services/storage.service.dart';
 import 'package:lojavirtual_mobile/services/utils/user.authenticated.model.dart';
 
 class Api {
-  static final String baseUrl = "https://192.168.0.103:5001/";
+  static final String baseUrl = "https://192.168.0.104:5001/";
 
   static Future<String> getTokenJwt() async {
     StorageService storage = StorageService();
